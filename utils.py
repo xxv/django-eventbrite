@@ -39,7 +39,10 @@ for kv in LOCAL_TO_EB_KEY_MAPPING:
 def eb_to_local(event):
     for field_name in EVENT_FIELDS:
         if field_name in HTML_FIELDS:
-            setattr(event, field_name, event[field_name]['html'])
+            html = event[field_name]['html']
+            if hasattr(html, 'rendered'):
+                html = html.rendered
+            setattr(event, field_name, html)
         elif field_name in TIME_FIELDS:
             tz = pytz.timezone(event[field_name]['timezone'])
             setattr(event, field_name, tz.localize(dateutil.parser.parse(event[field_name]['local'])))
