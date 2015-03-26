@@ -52,7 +52,7 @@ def eb_to_local(event):
     event.save()
 
 def update_events():
-    events = eb.get_user_owned_events(557048232)['events']
+    events = eb.get_user_owned_events(eb.get_user()['id'])['events']
     for event in events:
         existing = Event.objects.filter(eb_id=event['id'])
         if existing:

@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from . import models
+from .models import Event
 
+@admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     readonly_fields = ('eb_id','eb_url',)
-
-admin.site.register(models.Event, EventAdmin)

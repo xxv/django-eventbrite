@@ -12,7 +12,7 @@ setup(
     version='0.1.0',
     author='Steve Pomeroy',
     author_email='steve@staticfree.info',
-    packages=['django_eventbrite'],
+    packages=['django_eventbrite', 'django_eventbrite.management', 'django_eventbrite.management.commands'],
     include_package_data=True,
     exclude_package_data={
         '': ['*.pyc'],
