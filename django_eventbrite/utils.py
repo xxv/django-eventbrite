@@ -99,16 +99,13 @@ def get_next_page_number(pagination):
 def update_events():
     page = 1
     while page:
+        print("Loading page %d..." % page)
         response = eb.get_user_owned_events(eb.get_user()['id'], page=page)
-        with open("response_cache", 'w') as writeout:
-            writeout.write(str(response))
         events = response['events']
         for event in events:
             e2l_event(event)
         next_page = get_next_page_number(response['pagination'])
         page = next_page
-        if next_page:
-            print "Loading page %d" % next_page
-        else:
-            print "Done loading all pages."
+        if not next_page:
+            print("Done loading all pages.")
 
