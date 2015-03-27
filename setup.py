@@ -12,7 +12,11 @@ setup(
     version='0.1.0',
     author='Steve Pomeroy',
     author_email='steve@staticfree.info',
-    packages=['django_eventbrite', 'django_eventbrite.management', 'django_eventbrite.management.commands'],
+    packages=[
+        'django_eventbrite',
+        'django_eventbrite.management',
+        'django_eventbrite.management.commands',
+        ],
     include_package_data=True,
     exclude_package_data={
         '': ['*.pyc'],
@@ -21,6 +25,9 @@ setup(
     license='BSD LICENSE',
     description='An Eventbrite app for Django',
     long_description=README,
+    install_requires=[
+        "django-money >= 0.5.0",
+        ],
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
