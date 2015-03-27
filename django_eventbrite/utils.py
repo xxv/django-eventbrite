@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 from eventbrite import Eventbrite
-from markupfield.fields import MarkupField, Markup
 from models import Event, TicketType
 from decimal import Decimal
 from moneyed import Money
@@ -54,7 +53,6 @@ def e2l(model, eb_model, save=True):
         loc_key = e2l_key(eb_key)
         if not hasattr(e, loc_key):
             continue
-        loc_field = getattr(e, loc_key)
         eb_field = eb_model[eb_key]
 
         if isinstance(eb_field, dict):
@@ -66,9 +64,6 @@ def e2l(model, eb_model, save=True):
                 tz = pytz.timezone(eb_field['timezone'])
                 eb_field = tz.localize(dateutil.parser.parse(eb_field['local']))
 
-        if isinstance(loc_field, Markup):
-            loc_field.markup_type = 'html'
-            loc_field.raw = eb_field
         elif loc_key in FK_MAP:
             fks[loc_key] = eb_field
         else:
