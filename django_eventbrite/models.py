@@ -12,16 +12,16 @@ class TicketType(models.Model):
     donation = models.BooleanField(default=False)
     free = models.BooleanField(default=False)
     event = models.ForeignKey('Event', related_name='tickets')
+    quantity_sold = models.IntegerField()
 
     def __str__(self):
         return self.name
 
 class Event(models.Model):
     STATUSES = (
-            ('all', 'all'),
             ('draft', 'draft'),
             ('live', 'live'),
-            ('cancelled', 'cancelled'),
+            ('canceled', 'canceled'),
             ('started', 'started'),
             ('ended', 'ended'),
             ('completed', 'completed'),
@@ -35,6 +35,9 @@ class Event(models.Model):
     end = models.DateTimeField()
     capacity = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUSES)
+
+    def quantity_sold(self):
+        return sum(map(lambda t: t.quantity_sold, self.tickets.all()))
 
     class Meta:
         ordering = ["-end"]

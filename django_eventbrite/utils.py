@@ -63,7 +63,10 @@ def e2l(model, eb_model, save=True):
             elif 'timezone' in eb_field:
                 tz = pytz.timezone(eb_field['timezone'])
                 eb_field = tz.localize(dateutil.parser.parse(eb_field['local']))
-
+            else:
+                print("Warning: Unknown complex value type for field %s" % eb_key)
+                continue
+            setattr(e, loc_key, eb_field)
         elif loc_key in FK_MAP:
             fks[loc_key] = eb_field
         else:
@@ -96,13 +99,20 @@ def get_next_page_number(pagination):
     else:
         return None
 
-def update_events():
+def load_user_events(**args):
+    load_paged_events(eb.get_user_owned_events, **args)
+
+def load_paged_events(method, **args):
     page = 1
     while page:
         print("Loading page %d..." % page)
-        response = eb.get_user_owned_events(eb.get_user()['id'], page=page)
+        response = method(eb.get_user()['id'], page=page, **args)
         events = response['events']
+        #import json
+        #with open('event_dump', 'w') as dump:
+        #    dump.write(json.dumps(events))
         for event in events:
+            print("Loading %s..." % event['name']['text'])
             e2l_event(event)
         next_page = get_next_page_number(response['pagination'])
         page = next_page
