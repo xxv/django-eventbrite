@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 from eventbrite import Eventbrite
-from models import Event, TicketType
+from .models import Event, TicketType
 from decimal import Decimal
 from moneyed import Money
 import dateutil.parser
@@ -74,7 +74,7 @@ def e2l(model, eb_model, save=True):
     if save:
         e.save()
 
-    for loc_key, eb_field in fks.iteritems():
+    for loc_key, eb_field in fks.items():
         if hasattr(eb_field, '__iter__'):
             for sub_model in eb_field:
                 m = e2l(FK_MAP[loc_key], sub_model, save=False)
