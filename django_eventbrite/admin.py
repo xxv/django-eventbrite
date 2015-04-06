@@ -60,7 +60,9 @@ class EventAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        ('status',)
+        'status',
+        'start',
+        'end',
     )
 
     inlines = [
