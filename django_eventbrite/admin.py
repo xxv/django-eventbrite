@@ -35,8 +35,6 @@ class AttendeeAdmin(admin.ModelAdmin):
         ('status',)
     )
 
-
-
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     search_fields = (
@@ -56,7 +54,10 @@ class EventAdmin(admin.ModelAdmin):
         'end',
         'status',
         'capacity',
+        'ticket_sales',
         'quantity_sold',
+        'quantity_refunded',
+        'quantity_canceled',
     )
 
     list_filter = (

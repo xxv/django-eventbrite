@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.html import strip_tags
 from django.utils.timezone import localtime
 from djmoney.models.fields import MoneyField
+from moneyed import Money
 
 class TicketType(models.Model):
     eb_id = models.BigIntegerField(unique=True, verbose_name='Eventbrite ID')
@@ -60,6 +61,19 @@ class Event(models.Model):
 
     def quantity_sold(self):
         return sum(map(lambda t: t.quantity_sold, self.tickets.all()))
+    quantity_sold.short_description='Net sales'
+
+    def quantity_refunded(self):
+        return len(self.attendees.filter(refunded=True))
+    quantity_refunded.short_description='Refunds'
+
+    def quantity_canceled(self):
+        return len(self.attendees.filter(canceled=True))
+    quantity_canceled.short_description='Cancellations'
+
+    def ticket_sales(self):
+        return sum(map(lambda a: a.gross, self.attendees.filter(refunded=False)), Money(0, 'USD'))
+    ticket_sales.short_description='Ticket sales'
 
     class Meta:
         ordering = ["-end"]
