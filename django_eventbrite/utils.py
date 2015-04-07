@@ -171,8 +171,12 @@ def load_paged_objects(model, key, method, *arg, **args):
         #with open('event_dump', 'w') as dump:
         #    dump.write(json.dumps(events))
         for obj in objs:
-            print('Loading %s %s...' % (model.__name__, obj.get('name', '<#%s>' % obj['id'])))
-            e2l(model, key, obj)
+            ref=obj.get('name', '<#%s>' % obj['id'])
+            print('Loading %s %s...' % (model.__name__, ref))
+            try:
+                e2l(model, key, obj)
+            except Exception as e:
+                print("Error loading %s: %s" % (ref, e))
         next_page = get_next_page_number(response['pagination'])
         page = next_page
         if not next_page:
