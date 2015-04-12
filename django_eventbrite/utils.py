@@ -172,6 +172,8 @@ def load_paged_objects(model, key, method, *arg, **args):
         #    dump.write(json.dumps(events))
         for obj in objs:
             ref=obj.get('name', '<#%s>' % obj['id'])
+            if isinstance(ref, dict) and 'text' in ref:
+                ref = ref['text']
             print('Loading %s %s...' % (model.__name__, ref))
             try:
                 e2l(model, key, obj)
