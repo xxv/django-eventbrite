@@ -4,12 +4,14 @@ from django.utils.timezone import localtime
 from djmoney.models.fields import MoneyField
 from moneyed import Money
 
+DEFAULT_CURRENCY='USD'
+
 class TicketType(models.Model):
     eb_id = models.BigIntegerField(unique=True, verbose_name='Eventbrite ID')
     name = models.CharField(max_length=255)
     description = models.TextField(null=True)
-    cost = MoneyField(max_digits=10, decimal_places=2)
-    fee = MoneyField(max_digits=10, decimal_places=2)
+    cost = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
+    fee = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
     donation = models.BooleanField(default=False)
     free = models.BooleanField(default=False)
     event = models.ForeignKey('Event', related_name='tickets')
@@ -35,8 +37,8 @@ class Attendee(models.Model):
     status = models.CharField(max_length=30)
     email = models.EmailField()
     event = models.ForeignKey('Event', related_name='attendees')
-    gross = MoneyField(max_digits=10, decimal_places=2)
-    fee = MoneyField(max_digits=10, decimal_places=2)
+    gross = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
+    fee = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
     refunded = models.BooleanField(default=False)
     canceled = models.BooleanField(default=False)
 
