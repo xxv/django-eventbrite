@@ -149,7 +149,7 @@ def l2e_event(local):
         pass
 
 def load_user_events(**args):
-    load_paged_objects(Event, 'events', eb.get_user_owned_events, eb.get_user()['id'], **args)
+    load_paged_objects(Event, 'events', eb.get_user_owned_events, 'me', **args)
 
 def load_event_attendees(event_id, **args):
     load_paged_objects(Attendee, 'attendees', lambda eb_id, **args: AccessMethodsMixin.get_event_attendees(eb, eb_id, **args), event_id, **args)
