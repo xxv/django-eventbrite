@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum, Avg, Count
 from django.utils.html import strip_tags
 from django.utils.timezone import localtime
 from djmoney.models.fields import MoneyField
@@ -62,15 +63,16 @@ class Event(models.Model):
     status = models.CharField(max_length=10, choices=STATUSES)
 
     def quantity_sold(self):
-        return sum(map(lambda t: t.quantity_sold, self.tickets.all()))
+        result = self.tickets.all().aggregate(Sum('quantity_sold'))
+        return result['quantity_sold__sum']
     quantity_sold.short_description='Net sales'
 
     def quantity_refunded(self):
-        return len(self.attendees.filter(refunded=True))
+        return self.attendees.filter(refunded=True).count()
     quantity_refunded.short_description='Refunds'
 
     def quantity_canceled(self):
-        return len(self.attendees.filter(canceled=True))
+        return self.attendees.filter(canceled=True).count()
     quantity_canceled.short_description='Cancellations'
 
     def ticket_sales(self):
