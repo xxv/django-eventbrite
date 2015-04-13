@@ -151,6 +151,9 @@ def l2e_event(local):
 def load_user_events(**args):
     load_paged_objects(Event, 'events', eb.get_user_owned_events, 'me', **args)
 
+def load_event(event_id, **args):
+    load_single_object(Event, eb.get_event, event_id, **args)
+
 def load_event_attendees(event_id, **args):
     load_paged_objects(Attendee, 'attendees', lambda eb_id, **args: AccessMethodsMixin.get_event_attendees(eb, eb_id, **args), event_id, **args)
 
@@ -159,6 +162,10 @@ def get_next_page_number(pagination):
         return pagination['page_number'] + 1
     else:
         return None
+
+def load_single_object(model, method, *arg, **args):
+    response = method(*arg, **args)
+    e2l(model, None, response)
 
 def load_paged_objects(model, key, method, *arg, **args):
     page = 1
