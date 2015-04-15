@@ -72,11 +72,7 @@ def e2l_set_local(obj, eb_field, eb_key, loc_key, fks):
     setattr(obj, loc_key, eb_field)
 
 def has_field(obj, field):
-    try:
-        obj._meta.get_field(field)
-        return True
-    except FieldDoesNotExist:
-        return False
+    return field in obj._meta.get_all_field_names()
 
 def e2l(model, eb_model_name, eb_model, save=True):
     """Loads Eventbrite data into a local model
