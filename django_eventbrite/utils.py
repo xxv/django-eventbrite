@@ -137,14 +137,6 @@ def e2l(model, eb_model_name, eb_model, save=True):
 
     return e
 
-def l2e_event(local):
-    if local.eb_id:
-        # update
-        pass
-    else:
-        # publish
-        pass
-
 def load_user_events(**args):
     load_paged_objects(Event, 'events', eb.get_user_owned_events, 'me', **args)
 
@@ -187,4 +179,26 @@ def load_paged_objects(model, key, method, *arg, **args):
         page = next_page
         if not next_page:
             print("Done loading all pages.")
+
+### stuff to convert back to Eventbrite
+
+def to_multipart(text, html=None):
+    result = {}
+    result['html'] = html or text
+    return result
+
+def to_datetime(when):
+    result = {}
+    # TODO hardcoded to the TZ of the server because timezones are hard
+    result['timezone'] = settings.TIME_ZONE
+    result['utc'] = when.astimezone(pytz.utc).isoformat().replace('+00:00', 'Z')
+
+    return result
+
+def to_money(money):
+    result = {}
+    # Value is in cents
+    result['value'] = int(money.amount * 100)
+    result['currency'] = money.currency.code
+    return result
 
