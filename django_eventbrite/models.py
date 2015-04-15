@@ -8,7 +8,7 @@ from moneyed import Money
 DEFAULT_CURRENCY='USD'
 
 class TicketType(models.Model):
-    eb_id = models.BigIntegerField(unique=True, verbose_name='Eventbrite ID')
+    eb_id = models.CharField(max_length=255, unique=True, verbose_name='Eventbrite ID')
     name = models.CharField(max_length=255)
     description = models.TextField(null=True)
     cost = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
@@ -22,12 +22,12 @@ class TicketType(models.Model):
         return self.name
 
 class Order(models.Model):
-    eb_id = models.BigIntegerField(unique=True, verbose_name='Eventbrite ID')
+    eb_id = models.CharField(max_length=255, unique=True, verbose_name='Eventbrite ID')
     changed = models.DateTimeField()
     created = models.DateTimeField()
 
 class Attendee(models.Model):
-    eb_id = models.BigIntegerField(unique=True, verbose_name='Eventbrite ID')
+    eb_id = models.CharField(max_length=255, unique=True, verbose_name='Eventbrite ID')
     name = models.CharField(max_length=200)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -54,7 +54,7 @@ class Event(models.Model):
     )
 
     name = models.CharField(max_length=255)
-    eb_id = models.BigIntegerField(unique=True, verbose_name='Eventbrite ID', null=True)
+    eb_id = models.CharField(max_length=255, unique=True, verbose_name='Eventbrite ID', null=True)
     eb_url = models.URLField(verbose_name='Eventbrite URL', null=True)
     description = models.TextField(null=True)
     start = models.DateTimeField()
