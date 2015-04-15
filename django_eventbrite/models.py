@@ -75,8 +75,15 @@ class Event(models.Model):
         return self.attendees.filter(canceled=True).count()
     quantity_canceled.short_description='Cancellations'
 
+    def eventbrite_fees(self):
+        eb_fees = sum(map(lambda a: a.fee, self.attendees.filter(refunded=False)), Money(0, 'USD'))
+        return eb_fees
+    eventbrite_fees.short_description='EB fees'
+
     def ticket_sales(self):
-        return sum(map(lambda a: a.gross, self.attendees.filter(refunded=False)), Money(0, 'USD'))
+        gross = sum(map(lambda a: a.gross, self.attendees.filter(refunded=False)), Money(0, 'USD'))
+        eb_fees = sum(map(lambda a: a.fee, self.attendees.filter(refunded=False)), Money(0, 'USD'))
+        return gross - eb_fees
     ticket_sales.short_description='Ticket sales'
 
     class Meta:

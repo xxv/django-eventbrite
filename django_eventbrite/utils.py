@@ -14,6 +14,7 @@ eb = Eventbrite(settings.EVENTBRITE_OAUTH_TOKEN)
 LOCAL_TO_EB_KEY_MAPPING = (
     ('eb_id', 'id'),
     ('eb_url', 'url'),
+    ('fee', 'eventbrite_fee'),
     ('tickets', 'ticket_classes'),
     ('canceled', 'cancelled'), # ugh. Their API is inconsistent.
 )
