@@ -14,6 +14,7 @@ eb = Eventbrite(settings.EVENTBRITE_OAUTH_TOKEN)
 LOCAL_TO_EB_KEY_MAPPING = (
     ('eb_id', 'id'),
     ('eb_url', 'url'),
+    ('_null_', 'event_id'),
     ('fee', 'eventbrite_fee'),
     ('tickets', 'ticket_classes'),
     ('canceled', 'cancelled'), # ugh. Their API is inconsistent.
@@ -23,6 +24,8 @@ TIME_FIELDS = (
     'end',
     'start',
 )
+
+SAVE_FIRST = (Event,)
 
 FK_MAP = {
     'tickets': TicketType,
@@ -109,6 +112,8 @@ def e2l(model, eb_model_name, eb_model, save=True):
     flatten_fields = FLATTEN.get(eb_model_name)
 
     for eb_key in eb_model.keys():
+        if DEBUG:
+            print("Loading eb_key {0}".format(eb_key))
         if flatten_fields and eb_key in flatten_fields:
             if not isinstance(eb_model[eb_key], dict):
                 continue
@@ -126,7 +131,8 @@ def e2l(model, eb_model_name, eb_model, save=True):
             continue
         e2l_set_local(e, eb_model[eb_key], eb_key, loc_key, fks)
 
-    if save:
+    if save and model in SAVE_FIRST:
+        print("Saving...")
         e.save()
 
     if DEBUG:
@@ -145,6 +151,7 @@ def e2l(model, eb_model_name, eb_model, save=True):
                 getattr(e, loc_key).add(m)
 
     if save:
+        print("Saving...")
         e.save()
 
     return e
@@ -186,6 +193,8 @@ def load_paged_objects(model, key, method, *arg, **args):
             try:
                 e2l(model, key, obj)
             except Exception as e:
+                if DEBUG:
+                    raise e
                 print("Error loading %s: %s" % (ref, e))
         next_page = get_next_page_number(response['pagination'])
         page = next_page
