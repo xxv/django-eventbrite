@@ -54,7 +54,10 @@ def l2e_key(key):
 
 def e2l_set_local(obj, eb_field, eb_key, loc_key, fks):
     if DEBUG:
-        print("{obj!s:<.20}: Setting {eb_key!s:<15} to {eb_field!s:<.40} ({eb_key} -> {loc_key})".format(**locals()))
+        try:
+            print("Setting {eb_key!s:<15} to {eb_field!s:<.40} ({eb_key} -> {loc_key})".format(**locals()))
+        except:
+            print("Error printing debug info")
     if loc_key in FK_MAP:
         fks[loc_key] = eb_field
         return
@@ -94,8 +97,12 @@ def e2l(model, eb_model_name, eb_model, save=True):
     existing = model.objects.filter(eb_id=eb_model['id'])
     if existing:
         e = existing[0]
+        if DEBUG:
+            print("Event with ID {0} already in database. Updating.".format(eb_model['id']))
     else:
         e = model(eb_id=eb_model['id'])
+        if DEBUG:
+            print("Creating new Event with ID {0}".format(eb_model['id']))
 
     fks = {}
 
@@ -115,7 +122,7 @@ def e2l(model, eb_model_name, eb_model, save=True):
         loc_key = e2l_key(eb_key)
         if not has_field(e, loc_key):
             if DEBUG:
-                print("model {e!s:.<20} has no {loc_key}, skipping...".format(**locals()))
+                print("model {0} has no {1}, skipping...".format(type(e), loc_key))
             continue
         e2l_set_local(e, eb_model[eb_key], eb_key, loc_key, fks)
 
