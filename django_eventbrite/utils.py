@@ -126,6 +126,11 @@ def e2l(model, eb_model_name, eb_model, save=True):
             continue
         e2l_set_local(e, eb_model[eb_key], eb_key, loc_key, fks)
 
+    if save:
+        e.save()
+
+    if DEBUG:
+        print("Processing foreign key objects")
     for loc_key, eb_field in fks.items():
         if isinstance(eb_field, list):
             for sub_model in eb_field:
