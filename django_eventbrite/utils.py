@@ -14,6 +14,7 @@ eb = Eventbrite(settings.EVENTBRITE_OAUTH_TOKEN)
 
 LOCAL_TO_EB_KEY_MAPPING = (
     ('eb_id', 'id'),
+    ('event', 'event_id'),
     ('eb_url', 'url'),
     ('fee', 'eventbrite_fee'),
     ('tickets', 'ticket_classes'),
@@ -30,6 +31,7 @@ SAVE_FIRST = (Event,)
 FK_MAP = {
     'tickets': TicketType,
     'event': Event,
+    'event_id': Event,
     'events': Event,
     'attendees': Attendee,
     'order': Order
@@ -97,7 +99,11 @@ def e2l(model, eb_model_name, eb_model, save=True):
     If save is not set to True, make sure to save the model yourself,
     otherwise the data will be lost.
     """
-    existing = model.objects.filter(eb_id=eb_model['id'])
+    if type(eb_model) == str:
+        existing = model.objects.filter(eb_id=eb_model)
+        return existing[0]
+    else:
+        existing = model.objects.filter(eb_id=eb_model['id'])
     if existing:
         e = existing[0]
         if DEBUG:
