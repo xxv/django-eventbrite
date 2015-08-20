@@ -8,13 +8,13 @@ from decimal import Decimal
 from moneyed import Money
 import dateutil.parser
 import pytz
+import traceback
 
 eb = Eventbrite(settings.EVENTBRITE_OAUTH_TOKEN)
 
 LOCAL_TO_EB_KEY_MAPPING = (
     ('eb_id', 'id'),
     ('eb_url', 'url'),
-    ('_null_', 'event_id'),
     ('fee', 'eventbrite_fee'),
     ('tickets', 'ticket_classes'),
     ('canceled', 'cancelled'), # ugh. Their API is inconsistent.
@@ -127,7 +127,10 @@ def e2l(model, eb_model_name, eb_model, save=True):
         loc_key = e2l_key(eb_key)
         if not has_field(e, loc_key):
             if DEBUG:
-                print("model {0} has no {1}, skipping...".format(type(e), loc_key))
+                try:
+                    print("model {e!s:.<20} has no {loc_key}, skipping...".format(**locals()))
+                except Exception:
+                    pass
             continue
         e2l_set_local(e, eb_model[eb_key], eb_key, loc_key, fks)
 
@@ -151,8 +154,14 @@ def e2l(model, eb_model_name, eb_model, save=True):
                 getattr(e, loc_key).add(m)
 
     if save:
-        print("Saving...")
-        e.save()
+        try:
+            e.save()
+        except Exception as exc:
+            if DEBUG:
+                from django.db import connection
+                print(connection.queries[-1]['sql'])
+            raise exc
+
 
     return e
 
@@ -194,8 +203,10 @@ def load_paged_objects(model, key, method, *arg, **args):
                 e2l(model, key, obj)
             except Exception as e:
                 if DEBUG:
-                    raise e
-                print("Error loading %s: %s" % (ref, e))
+                    print("Data: %s" % (obj,))
+                    traceback.print_exc()
+                else:
+                    print("Error loading %s: %s" % (model.__name__, e))
         next_page = get_next_page_number(response['pagination'])
         page = next_page
         if not next_page:
